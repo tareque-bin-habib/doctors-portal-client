@@ -27,10 +27,15 @@ const Services = () => {
         },
     ]
     return (
-        <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20 py-20'>
-            {
-                services.map(service => <Service key={service.id} service={service}></Service>)
-            }
+        <div className=' py-20'>
+            <h3 className='text-center pb-5 text-cyan-400 font-bold'>Our Services</h3>
+            <p className='text-center text-4xl font-bold'>Services We Provide</p>
+            <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20 pt-20'>
+                {
+                    services.map(service => <Service key={service.id} service={service}></Service>)
+                }
+            </div>
+
         </div>
     );
 };
