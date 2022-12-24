@@ -1,3 +1,4 @@
+import { GoogleAuthProvider } from 'firebase/auth';
 import React from 'react';
 import { useContext } from 'react';
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthProvider';
 
 const Login = () => {
     const { register, formState: { errors }, handleSubmit } = useForm()
-    const { signIn } = useContext(AuthContext)
+    const { signIn, signInWithGoogle } = useContext(AuthContext)
     const [loginError, setLoginError] = useState('')
     const location = useLocation();
     const navigate = useNavigate();
@@ -27,6 +28,18 @@ const Login = () => {
                 console.error(error)
                 setLoginError('You Entered a Wrong password!')
             })
+
+    }
+
+    const handleWithGoogle = data => {
+        const provider = new GoogleAuthProvider()
+        signInWithGoogle(provider, data.email, data.password)
+            .then(result => {
+                const user = result.user;
+                console.log(user)
+                navigate(from, { replace: true })
+            })
+            .catch(error => console.error(error))
 
     }
 
@@ -59,7 +72,7 @@ const Login = () => {
                 </form>
                 <p>New to Doctors portal <Link className='text-center text-secondary' to='/signup'>Create new Account</Link> </p>
                 <div className="divider">OR</div>
-                <button className='btn btn-outline w-full'>CONTINUE WITH GOOGLE</button>
+                <button onClick={handleWithGoogle} className='btn btn-outline w-full'>CONTINUE WITH GOOGLE</button>
             </div>
         </div>
     );

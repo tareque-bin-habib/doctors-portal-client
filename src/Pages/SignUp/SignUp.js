@@ -1,3 +1,4 @@
+import { GoogleAuthProvider } from 'firebase/auth';
 import React from 'react';
 import { useState } from 'react';
 import { useContext } from 'react';
@@ -8,7 +9,7 @@ import { AuthContext } from '../../contexts/AuthProvider';
 
 const SignUp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { createUser, updateUser } = useContext(AuthContext)
+    const { createUser, updateUser, signInWithGoogle } = useContext(AuthContext)
     const [signUpError, setSignUpError] = useState('')
     const handleSignUp = data => {
         console.log(data)
@@ -29,6 +30,18 @@ const SignUp = () => {
                 console.error(error)
                 setSignUpError('Email Already Exist')
             })
+    }
+
+    const handleWithGoogle = data => {
+        const provider = new GoogleAuthProvider()
+        signInWithGoogle(provider, data.email, data.password)
+            .then(result => {
+                const user = result.user;
+                console.log(user)
+
+            })
+            .catch(error => console.error(error))
+
     }
 
 
@@ -78,7 +91,7 @@ const SignUp = () => {
                 </form>
                 <p>Already have an account<Link className='text-center text-secondary' to='/login'> please login</Link> </p>
                 <div className="divider">OR</div>
-                <button className='btn btn-outline w-full'>CONTINUE WITH GOOGLE</button>
+                <button onClick={handleWithGoogle} className='btn btn-outline w-full'>CONTINUE WITH GOOGLE</button>
             </div>
         </div>
     );
