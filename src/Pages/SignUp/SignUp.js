@@ -4,15 +4,25 @@ import { useState } from 'react';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import useToken from '../../hooks/UseToken';
 
 const SignUp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { createUser, updateUser, signInWithGoogle } = useContext(AuthContext)
     const [signUpError, setSignUpError] = useState('')
+    const [createdUserEmail, setCreatedUserEmail] = useState('')
+    const [token] = useToken(createdUserEmail)
+    const navigate = useNavigate()
+
+
+    if (token) {
+        navigate('/')
+    }
+
+
     const handleSignUp = data => {
-        console.log(data)
         setSignUpError('')
         createUser(data.email, data.password)
             .then(result => {
@@ -23,7 +33,9 @@ const SignUp = () => {
                     displayName: data.name
                 }
                 updateUser(userInfo)
-                    .then(() => { })
+                    .then(() => {
+                        saveUser(data.name, data.email)
+                    })
                     .catch(error => console.error(error))
             })
             .catch(error => {
@@ -32,12 +44,32 @@ const SignUp = () => {
             })
     }
 
-    const handleWithGoogle = data => {
+
+    const saveUser = (name, email) => {
+        const user = { name, email };
+        fetch('http://localhost:5000/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(res => res.json())
+            .then(data => {
+                setCreatedUserEmail(email)
+            })
+    }
+
+
+
+
+    const handleWithGoogle = () => {
         const provider = new GoogleAuthProvider()
-        signInWithGoogle(provider, data.email, data.password)
+        signInWithGoogle(provider)
             .then(result => {
                 const user = result.user;
                 console.log(user)
+
 
             })
             .catch(error => console.error(error))

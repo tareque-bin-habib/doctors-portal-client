@@ -21,6 +21,7 @@ const AppointmentBanner = ({ selectedDate, setSelectedDate }) => {
                             mode='single'
                             selected={selectedDate}
                             onSelect={setSelectedDate}
+
                         />
                     </div>
                 </div>

@@ -5,15 +5,22 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import useToken from '../../hooks/UseToken';
 
 const Login = () => {
     const { register, formState: { errors }, handleSubmit } = useForm()
     const { signIn, signInWithGoogle } = useContext(AuthContext)
     const [loginError, setLoginError] = useState('')
+    const [loginUserEmail, setLoginUserEmail] = useState('');
+    const [token] = useToken(loginUserEmail)
     const location = useLocation();
     const navigate = useNavigate();
 
     const from = location.state?.from?.pathname || '/'
+
+    if (token) {
+        navigate(from, { replace: true })
+    }
 
     const handleLogin = data => {
         console.log(data)
@@ -22,7 +29,8 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user)
-                navigate(from, { replace: true })
+                setLoginUserEmail(data.email)
+
             })
             .catch(error => {
                 console.error(error)
@@ -31,17 +39,19 @@ const Login = () => {
 
     }
 
-    const handleWithGoogle = data => {
-        const provider = new GoogleAuthProvider()
-        signInWithGoogle(provider, data.email, data.password)
+    const handleWithGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithGoogle(provider)
             .then(result => {
-                const user = result.user;
+                const user = result.user
                 console.log(user)
                 navigate(from, { replace: true })
             })
             .catch(error => console.error(error))
 
     }
+
+
 
     return (
         <div className='h-[800px] flex justify-center items-center'>
@@ -60,7 +70,7 @@ const Login = () => {
                         <label className="label"><span className="label-text">password</span>
                         </label>
                         <input type="password" className="input input-bordered w-full max-w-xs" {...register("password", { required: "password is requred", minLength: { value: 6, message: "Password should be 6 charecter or londger" } })} />
-                        <label className="label"><span className="label-text">Forget Password?</span>
+                        <label className="label"><span className="label-text">Forget Password? <Link className='text-secondary font-bold' >Please reset</Link> </span>
                         </label>
                         {errors.password && <p className='text-red-600'>{errors.password?.message}</p>}
 

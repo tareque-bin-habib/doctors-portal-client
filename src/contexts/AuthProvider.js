@@ -1,6 +1,6 @@
 import React from 'react';
 import { createContext } from 'react';
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth'
 import app from '../firebase/firebase.config'
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -11,6 +11,20 @@ const auth = getAuth(app)
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [theme, setTheme] = useState("light")
+
+    useEffect(() => {
+        if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+        else {
+            document.documentElement.classList.remove("dark")
+        }
+    }, [theme])
+
+    const handleThemeSwitch = () => {
+        setTheme(theme === "dark" ? "light" : "dark")
+    }
 
     const createUser = (email, password) => {
         setLoading(true)
@@ -38,13 +52,15 @@ const AuthProvider = ({ children }) => {
     }
 
     const updateUser = (userInfo) => {
-        return updateProfile(user, userInfo)
+        return updateProfile(auth.currentUser, userInfo)
     }
 
-    const signInWithGoogle = (email, password) => {
+    const signInWithGoogle = (provider) => {
         setLoading(true)
-        signInWithPopup(auth, email, password)
+        signInWithPopup(auth, provider)
     }
+
+
 
 
 
@@ -54,6 +70,7 @@ const AuthProvider = ({ children }) => {
         logOut,
         updateUser,
         signInWithGoogle,
+        handleThemeSwitch,
         user,
         loading
     }

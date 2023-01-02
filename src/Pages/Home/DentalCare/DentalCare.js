@@ -2,7 +2,7 @@ import React from 'react';
 import image from '../../../assets/images/treatment.png'
 const DentalCare = () => {
     return (
-        <div className="hero">
+        <div className="hero  hidden md:block ">
             <div className="hero-content flex-col lg:flex-row">
                 <img src={image} className="lg:w-1/2 max-w-sm rounded-lg shadow-2xl" alt='' />
                 <div className='p-20'>
