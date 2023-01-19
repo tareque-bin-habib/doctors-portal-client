@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../Shared/Loading/Loading';
+import { FaPhotoVideo } from "react-icons/fa";
+import './AddDoctor.css'
 
 const AddDoctor = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,7 +18,7 @@ const AddDoctor = () => {
     const { data: specialties, isLoading } = useQuery({
         queryKey: ['specialty'],
         queryFn: async () => {
-            const res = await fetch('http://localhost:5000/appointmentSpecialty')
+            const res = await fetch('https://doctors-portal-server-eight-olive.vercel.app/appointmentSpecialty')
             const data = await res.json()
             return data
         }
@@ -44,7 +46,7 @@ const AddDoctor = () => {
                     }
 
                     // Save doctor info in database
-                    fetch('http://localhost:5000/doctors', {
+                    fetch('https://doctors-portal-server-eight-olive.vercel.app/doctors', {
                         method: 'POST',
                         headers: {
                             'content-type': 'application/json',
@@ -114,10 +116,22 @@ const AddDoctor = () => {
                 <div className="form-control w-full max-w-xs">
                     <label className="label"><span className="label-text">Photo</span>
                     </label>
-                    <input type="file" {...register("image", {
-                        required: "Photo is Required"
-                    })} className="input input-bordered w-full max-w-xs" />
-                    {errors.img && <p className='text-red-600'>{errors.img.message}</p>}
+
+                    <div className='extra flex justify-center' style={{ border: '1px dashed gray', padding: '10%' }}>
+
+                        <label htmlFor="profile">
+                            <div className='flex justify-center items-center flex-col'>
+                                <h2 className='text-gray-500'>upload your photo</h2>
+                                <FaPhotoVideo className='text-3xl cursor-pointer'></FaPhotoVideo>
+                            </div>
+
+
+                        </label>
+                        <input type="file" id='profile' {...register("image", {
+                            required: "Photo is Required"
+                        })} className="input input-bordered w-full max-w-xs hidden" />
+                        {errors.img && <p className='text-red-600'>{errors.img.message}</p>}
+                    </div>
 
                 </div>
                 <input className='btn btn-accent w-full mt-5' value='Add Doctor' type="submit" />
